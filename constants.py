@@ -17,3 +17,4 @@ for i in range(256):
 key = os.urandom(16)
 nonce = 0
 seedvalue = random.getrandbits(8)
+sleep = 0.02
