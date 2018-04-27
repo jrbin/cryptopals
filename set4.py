@@ -113,7 +113,7 @@ def challenge29(message, extension):
 
 
 def challenge30(message, extension):
-    for keylen in range(16, 17):
+    for keylen in range(1, 101):
         forged_message = challenge29_pad(message, keylen, 'little') + extension
         digest = mac(message, 'md4')
         md4_handle = md4.MD4()
