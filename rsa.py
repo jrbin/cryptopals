@@ -1,9 +1,35 @@
 import random
-from itertools import islice, cycle, count, compress
-import constants
 
 def new():
     return RSA().new()
+
+def gen_key_pair(bits=128):
+    r = RSA().new(bits)
+    return (r.e, r.n), (r.d, r.n)
+
+def encrypt(pub, message):
+    if len(pub) != 2:
+        raise ValueError('Invalid format for public key')
+    if isinstance(message, (bytes, bytearray)):
+        message = int.from_bytes(message, 'big')
+        message = pow(message, pub[0], pub[1])
+        return message.to_bytes((message.bit_length() + 7) // 8, 'big')
+    if isinstance(message, int):
+        return pow(message, pub[0], pub[1])
+    else:
+        raise ValueError('Message should be bytes or int')
+
+def decrypt(priv, message):
+    if len(priv) != 2:
+        raise ValueError('Invalid format for private key')
+    if isinstance(message, (bytes, bytearray)):
+        message = int.from_bytes(message, 'big')
+        message = pow(message, priv[0], priv[1])
+        return message.to_bytes((message.bit_length() + 7) // 8, 'big')
+    if isinstance(message, int):
+        return pow(message, priv[0], priv[1])
+    else:
+        raise ValueError('Message should be bytes or int')
 
 def extended_gcd(aa, bb):
     lastremainder, remainder = abs(aa), abs(bb)
@@ -66,6 +92,7 @@ class RSA:
         self.n = None
 
     def new(self, bits=128):
+        bits = (bits + 1) // 2 + 1
         while True:
             try:
                 p = gen_prime(bits)
@@ -105,3 +132,4 @@ class RSA:
     def _check_priv(self):
         if self.d is None or self.n is None:
             raise RuntimeError('You have not generated a private key')
+
