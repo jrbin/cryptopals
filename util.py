@@ -1,4 +1,6 @@
 import random
+import functools
+import operator
 
 def to_bytes(intval):
     return intval.to_bytes((intval.bit_length() + 7) // 8, 'big')
@@ -57,3 +59,9 @@ def gen_prime(bits):
         p = random.randint(left, right)
         if is_probable_prime(p):
             return p
+
+def xor(*args):
+    """Receives two byte strings and xor each byte of them."""
+    assert args
+    assert all(len(arg) == len(args[0]) for arg in args)
+    return bytes(map(lambda x : functools.reduce(operator.xor, x), zip(*args)))
